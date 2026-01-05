@@ -1,0 +1,140 @@
+drop database PharmacyWarehousedb;
+create database PharmacyWarehousedb;
+use PharmacyWarehousedb;
+
+create table client( 
+id_pharmacy int auto_increment primary key,
+firm varchar(150) not null,
+adress varchar(250) not null,
+phone_number varchar(13) not null
+);
+
+create table product_type( 
+id_product_type int auto_increment primary key,
+name varchar(50) 
+);
+
+create table product( 
+id_product int auto_increment primary key,
+id_product_type int,
+name varchar(175),
+manufacturer varchar(150),
+active_ingredient varchar(150),
+issued_with_a_prescription bool,
+cost decimal,
+quantity bigint,
+foreign key (id_product_type) references product_type(id_product_type)
+);
+
+create table post(
+id_post int auto_increment primary key,
+name varchar(25)
+);
+
+create table employee(
+id_employee int auto_increment primary key,
+id_post int,
+name varchar(50) not null,
+surname varchar(50) not null,
+patronymic varchar(50) not null,
+phone_number varchar(13) UNIQUE not null,
+login varchar(25) UNIQUE not null,
+password varchar(25) not null,
+birthdate datetime not null,
+Passport_series_and_number varchar(12) not null,
+foreign key (id_post) references post(id_post)
+);
+
+create table orders( /* заказ */
+id_order int auto_increment primary key,
+id_pharmacy int,
+id_employee int,
+delivery_date datetime,
+completed bool,
+foreign key (id_pharmacy) references client(id_pharmacy),
+foreign key (id_employee) references employee(id_employee)
+);
+
+create table product_order( /* для связи многие ко многим */
+id_product int,
+id_order int,
+quantity bigint,
+foreign key (id_product) references product(id_product),
+foreign key (id_order) references orders(id_order)
+);
+
+insert into client (firm, adress, phone_number)
+values ('Фармленд', 'г. Уфа, ул. Парковая, 64', '+79177550403'),
+('Дешёвая аптека', 'г. Уфа, ул. Кирова, 53/2','+79962561650'),
+('Фармленд','г. Уфа, ул. Понохоморенко, 1','+79375619478'),
+('Фармленд','г. Уфа, ул. Новомостовая, 8','+79382195720'),
+('Аптека на Галле','г. Уфа, просп. Октября, 16/2','+79123986532'),
+('Башформация','г. Уфа, ул. Цурюпы, 93','+79345783457'),
+('Витаминка','г. Уфа, ул. Аксакова, 97','+71928472974'),
+('Фармленд','просп. Октября, 106','+73289357293'),
+('АптекаПлюс', 'г. Уфа, просп. Октября, 93', '+79137845603'),
+('Фармленд', 'г. Уфа, ул. Баязита, 33', '+79173578937');
+
+insert into post (name)
+values ('Провизор'),
+('Администратор');
+
+insert into product_type (name)
+values ('лекарственные средства'),
+('изделия медицинского назначения'),
+('косметические товары'),
+('санитарно-гигиенические средства'),
+('минеральные воды'),
+('диетическое и детское питание'),
+('предметы гигиены и ухода для детей'),
+('биологически активные добавки (БАД)'),
+('очковая оптика'),
+('научно-популярная и специальная литература');
+
+insert into product (id_product_type, name, manufacturer, active_ingredient, issued_with_a_prescription, cost,quantity)
+values (1, 'Детралекс таб.', 'Франция', 'Гесперидин+Диосмин', false, 1028, 251341),
+(1, 'Перекись водорода р-р д/мест. и нар. прим.', null, 'Водорода пероксид', false, 10, 14123),
+(1, 'Полисорб МП пор. д/приг. сусп. д/вн. приема, 12 г', null, 'Кремния диоксид коллоидный', false, 244, 523523),
+(1, 'Мирамистин р-р д/мест. прим. фл. с урол. насадкой, 0.01%, 50 мл', null, 'Бензилдиметил[3-(миристоиламино)пропил]аммоний хлорид моногидрат', true, 317, 63525235),
+(1, 'Аквадетрим капли д/вн.приема фл.-капельница, 15000 МЕ/мл, 1 шт.', null, null, false, 299, 26232),
+(1, 'Раствор АВЗ АСД-2Ф Антисептик-стимулятор Дорогова фракция 2, 100 мл, 5уп.', null, null, true, 2079, 253),
+(1, 'Колдакт Хот Дринк пор. д/приг. р-ра д/вн. приема пак., 325 мг+10 мг+20 мг, 10 г, 5 шт., апельсин.', null, 'Парацетамол+Фенилэфрин+Фенирамин', false, 255, 21412411),
+(1, 'Аквадетрим капли д/вн. приема фл.-капельница, 15000 МЕ/мл, 1 шт.', null, null, false, 215, 243),
+(1, 'Магне B6 р-р д/вн. приема амп.', 'Франция', null, false, 664, 632465643),
+(8, 'Ревмафлекс капс., 60 шт., нейтральный, 1 уп.', 'Россия', null, false, 772, 1);
+
+/* */
+
+insert into employee(id_post, name, surname, patronymic, phone_number ,login ,password ,birthdate ,Passport_series_and_number)
+values (1, 'Пупа', 'Пупкин' ,'Пупкович', '+79125345735', 'pupa', '123', '1999-03-03', '6020 542678'),
+(1, 'Александр', 'Лаександров' ,'Александрович', '+79547264354', 'sanya', '123', '1987-06-07', '6020 542678'),
+(1, 'Борис', 'Борисов' ,'Борисович', '+79456436352', 'borya', '123', '1979-03-03', '6020 123678'),
+(1, 'Василий', 'Васильев' ,'Васильевич', '+79246464536', 'vasya', '123', '1998-03-03', '6030 542222'),
+(1, 'Генадий', 'Генадьев' ,'Генадьевич', '+79574563654', 'gena', '123', '2001-03-03', '6030 752678'),
+(1, 'Данил', 'Данилов' ,'Данилович', '+79576646573', 'danya', '123', '2002-03-03', '6030 897653'),
+(1, 'Евгений', 'Евгениев' ,'Евгениевич', '+79457365456', 'zhenya', '123', '2006-03-13', '8020 534578'),
+(2, 'Жигурда', 'Жигурдова' ,'Жигурдовна', '+79334533434', 'jigurda', '123', '1999-03-03', '6040 546458'),
+(2, 'Зублефар', 'Зублефаров' ,'Зублефарович', '+79346558768', 'zublefar', '123', '1999-03-03', '7020 546548'),
+(1, 'Ивана', 'Иванова' ,'Ивановна', '+79435756574', 'vanya', '123', '2001-04-13', '6020 987654');
+
+insert into orders(id_pharmacy, delivery_date, completed)
+values (1, '2025-03-03', false),
+(1, '2025-03-06', false),
+(2, '2025-01-03', false),
+(2, '2025-02-03', false),
+(2, '2025-01-25', false);
+
+insert into product_order(id_product, id_order, quantity)
+values (1, 1, 10),
+(2,1,15),
+(3,2,5),
+(4,2,6),
+(5,2,7),
+(6,3,8),
+(7,3,9),
+(8,3,10),
+(9,3,11),
+(1,4,12),
+(6,4,2),
+(4,5,6),
+(2,5,3);
