@@ -1,0 +1,2 @@
+# industrial-practice-3-course-2024
+Учебный проект
